@@ -1,0 +1,70 @@
+{
+  "name": "ekb-transport",
+  "version": "0.0.1",
+  "description": "Data Visualization and Analysis of Public Transport Efficiency in Yekaterinburg, Russia",
+  "module": "src",
+  "scripts": {
+    "build": "webpack --progress --colors --verbose --display-error-details --config webpack.config.babel.js",
+    "dev": "webpack-dev-server --port 3020 --colors --watch --env.dev --config webpack.config.babel.js",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "d3": "^4.12.0",
+    "d3-selection-multi": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^6.1.0",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-transform-decorators-legacy": "1.3.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "6.9.0",
+    "babel-preset-stage-0": "6.24.1",
+    "babel-regenerator-runtime": "^6.5.0",
+    "babel-register": "^6.26.0",
+    "css-loader": "^0.28.7",
+    "csv-loader": "^2.1.1",
+    "eslint": "^4.12.1",
+    "eslint-plugin-dependencies": "^2.4.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-notice": "^0.4.5",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^3.0.7",
+    "json-loader": "^0.5.7",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.16.1",
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.10.0",
+    "webpack-bundle-analyzer": "^2.9.2",
+    "webpack-dev-server": "^2.9.5"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          }
+        }
+      ]
+    ]
+  },
+  "standard": {
+    "ignore": [
+      "build/"
+    ],
+    "globals": [
+      "define"
+    ]
+  }
+}
