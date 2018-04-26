@@ -1,21 +1,25 @@
 /* global d3 */
+import React, { Component } from 'react';
 
 // Utils
 import { guid, styleText } from 'utils/chart';
-import Tooltip from 'utils/tooltip';
 import { getColor } from 'utils/color';
 import { getId, getTooltipContent } from './helpers';
 
-export default class ScatterGraph {
-  constructor(element, data) {
-    this.container = d3.select(element);
-    this.defaultWidth = element.clientWidth || 600;
+// Styles
+import s from './styles.scss';
+
+export default class ScatterGraph extends Component {
+  constructor(props) {
+    super(props);
+    this.makeRef = (c) => { this.svg = c; };
+
+    this.state = {};
+  }
+
+  componentDidMount() {
+    this.defaultWidth = this.svg.parentNode.clientWidth || 600;
     this.defaultHeight = 300;
-
-    this.svg = this.container.append('svg')
-      .style('display', 'block');
-
-    this.tooltip = new Tooltip(d3.select(this.svg.node().parentNode));
 
     this.margin = {
       left: 10,
@@ -24,24 +28,24 @@ export default class ScatterGraph {
       bottom: 10,
     };
 
-    this.data = data;
-    this.scatterGraph = this.svg.append('g').attr('class', 'scatter-box');
+    this.scatterGraph = d3.select(this.svg).append('g').attr('class', 'scatter-box');
     this.xScale = d3.scaleLinear();
     this.yScale = d3.scaleLinear();
 
     const firstRender = false;
-    this.render(1600, firstRender);
+    this.draw(1600, firstRender);
 
-    d3.select(window).on('resize.chart_' + guid(), () => this.render(0));
+    d3.select(window).on(`resize.chart_${guid()}`, () => this.draw(0));
   }
 
-  render(dur = 800, firstRender = false) {
-    const { data, scatterGraph, xScale, yScale, margin } = this;
+  draw(dur = 800, firstRender = false) {
+    const { scatterGraph, xScale, yScale, margin } = this;
+    const { data } = this.props;
     if (!data) return;
 
-    this.width = this.svg.node().parentNode.clientWidth || this.defaultWidth;
+    this.width = this.svg.parentNode.clientWidth || this.defaultWidth;
     this.height = this.defaultHeight;
-    this.svg
+    d3.select(this.svg)
       .attr('width', this.width)
       .attr('height', this.height);
 
@@ -65,10 +69,14 @@ export default class ScatterGraph {
       .attr('cx', d => xScale(d[0]) )
       .attr('cy', d => xScale(d[1]) )
       .attr('r', (d, i) => i)
-      .attr('fill', 'blue');
+      .attr('fill', '#91d2e2');
   }
 
-  getNode() { return this.svg.node(); }
-  getWidth() { return this.width; }
-  getHeight() { return this.height; }
+  render() {
+    return (
+      <div className={s.root}>
+        <svg ref={this.makeRef} className={s.svg} />
+      </div>
+    );
+  }
 }

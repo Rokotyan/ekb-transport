@@ -1,19 +1,17 @@
 {
-  "globals": {
-  },
+  "extends": "eslint-config-airbnb",
   "parser": "babel-eslint",
   "parserOptions": {
-    "ecmcaVersion": 8,
-    "sourceType": "module"
   },
   "env": {
     "browser": true,
     "node": true,
-    "es6": true,
+    "es6": true
   },
   "plugins": [
     "import",
     "dependencies",
+    "react"
   ],
   "settings": {
     "import/resolver": {
@@ -23,6 +21,9 @@
     }
   },
   "rules": {
+    "no-restricted-globals": 0,
+    "object-curly-newline": ["warn", { "minProperties": 6, "consistent": true }],
+    "import/extensions": 0,
     "import/no-unresolved": [2, {commonjs: true, amd: true}],
     "dependencies/case-sensitive": "error",
     "dependencies/no-cycles": "error",
@@ -32,117 +33,30 @@
     "prefer-const": "error",
     "no-const-assign": "error",
     "no-undef": "error",
+    "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": 0,
+    "prefer-default-export": 0,
+    "no-use-before-define": 0,
+    "react/jsx-pascal-case": 2,
+    "react/prefer-stateless-function": 0,
+    "global-require": 0,
+    "comma-dangle": 0,
     "indent": ["error", 2],
-    "no-negated-in-lhs": "error",
-    "no-cond-assign": [
-      "error",
-      "except-parens"
-    ],
-    "curly": [
-      "warn",
-      "multi-line"
-    ],
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-    "eqeqeq": [
-      "error",
-      "smart"
-    ],
-    "no-unused-expressions": "error",
-    "no-sequences": "error",
-    "no-nested-ternary": "warn",
-    "no-unreachable": "error",
-    "wrap-iife": [
-      "error",
-      "inside"
-    ],
-    "no-caller": "error",
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "no-unused-vars": "warn",
-    "no-var": "error",
-    "operator-linebreak": [
-      "error",
-      "after"
-    ],
-    "comma-style": [
-      "error",
-      "last"
-    ],
-    "camelcase": [
-      "error",
-      {
-        "properties": "never"
-      }
-    ],
-    "dot-notation": [
-      "error",
-      {
-        "allowPattern": "^[a-z]+(_[a-z]+)+$"
-      }
-    ],
-    "no-mixed-spaces-and-tabs": "error",
-    "no-trailing-spaces": "error",
-    "no-multi-str": "error",
-    "comma-dangle": [
-      "error",
-      "always-multiline"
-    ],
-    "comma-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true
-      }
-    ],
-    "space-before-blocks": [
-      "error",
-      "always"
-    ],
-    "keyword-spacing": [
-      2
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "semi-spacing": [
-      "error",
-      {
-        "after": true
-      }
-    ],
-    "space-infix-ops": "error",
-    "eol-last": "error",
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "no-with": "error",
-    "space-before-function-paren": [
-      "error",
-      "never"
-    ],
-    "no-loop-func": "error",
-    "no-spaced-func": "error",
-    "key-spacing": [
-      "error",
-      {
-        "beforeColon": false,
-        "afterColon": true
-      }
-    ],
-    "space-unary-ops": [
-      "error",
-      {
-        "words": false,
-        "nonwords": false
-      }
-    ],
-    "no-multiple-empty-lines": 2
+    "react/jsx-indent": ["error", 2],
+    "no-console": 0,
+    "react/forbid-prop-types": 0,
+    "max-len": 0,
+    "react/prop-types": 0,
+    "no-restricted-syntax": 0,
+    "react/jsx-filename-extension": 0,
+    "arrow-parens": 0,
+    "no-else-return": 0,
+    "no-shadow": 0,
+    "class-methods-use-this": 0,
+    "no-unused-vars": 1,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "space-in-parens": 0,
+    "quotes": 0,
+    "no-mixed-operators": 0
   }
 }

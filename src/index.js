@@ -1,4 +1,8 @@
-import MainPage from 'pages/main';
+import React from 'react';
+import { render } from 'react-dom';
+import App from './App';
 
-const mainPage = new MainPage(document.querySelector('#root'));
-mainPage.render();
+const root = document.createElement('div');
+document.body.appendChild(root);
+
+render(<App />, root);

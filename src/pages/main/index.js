@@ -1,20 +1,30 @@
-/* global d3 */
+import React, { Component } from 'react';
+
+// Components
 import ScatterGraph from 'components/scatter';
 
 // Data
 import sampleCSVData from 'data/sample.csv';
 import sampleJSONData from 'data/scatter.json';
 
-export default class MainPage {
-  constructor(element) {
-    this.container = d3.select(element);
+// Styles
+import s from './styles.scss';
+
+export default class MainPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    };
     console.log(sampleCSVData, sampleJSONData);
   }
 
+  // const chart = new ScatterGraph(this.container.node(), sampleJSONData);
   render() {
-    this.container.append('h1')
-      .text('Hello World');
-
-    const chart = new ScatterGraph(this.container.node(), sampleJSONData);
+    return (
+      <div className={s.root}>
+        Hello world!
+        <ScatterGraph data={sampleJSONData} />
+      </div>
+    );
   }
 }
