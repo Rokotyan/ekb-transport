@@ -6,8 +6,8 @@ export const guid = () => {
       .toString(16)
       .substring(1);
   }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
+  return `${s4() + s4()}-${s4()}-${s4()}-${
+    s4()}-${s4()}${s4()}${s4()}`;
 };
 
 export const styleText = (d, size, weight, fill = '#000', fontFamily = 'Helvetica', anchor = 'middle') => {
@@ -21,8 +21,11 @@ export const styleText = (d, size, weight, fill = '#000', fontFamily = 'Helvetic
 };
 
 export const wrapLabel = (selection, opt) => {
-  const options = opt ? opt : { styleFn: null, verticalAlign: 'middle', horizontalAlign: 'middle', labelWrapping: 'wrap', maxLabelWidth: 60, separator: ' ' };
-  selection.each(function(d) {
+  const options = opt || {
+    styleFn: null, verticalAlign: 'middle', horizontalAlign: 'middle', labelWrapping: 'wrap', maxLabelWidth: 60, separator: ' '
+  };
+  /* eslint-disable-next-line func-names */
+  selection.each(function (d) {
     const textElement = d3.select(this);
     const text = textElement.text();
     if ( !text ) return;
@@ -35,13 +38,13 @@ export const wrapLabel = (selection, opt) => {
 
     let tspan = textElement.append('tspan').attr('x', xPos);
     if ( options.styleFn ) tspan.call( options.styleFn );
-    let tspanText = words[ 0 ] + options.separator;
+    let tspanText = words[0] + options.separator;
     tspan.text( tspanText );
     if ( options.labelWrapping === 'wrap' ) {
       let tspanCount = 1;
       words.forEach( (word, i) => {
         if (i === 0) return;
-        tspan.text( tspanText + word + ' ' );
+        tspan.text( `${tspanText + word} ` );
         if ( tspan.node().getComputedTextLength() > (options.maxLabelWidth ? options.maxLabelWidth : d.maxLabelWidth) ) {
           tspan.text( tspanText.trim() );
           tspan = textElement.append('tspan')
@@ -50,20 +53,19 @@ export const wrapLabel = (selection, opt) => {
             .text( word + options.separator );
           if ( options.styleFn ) tspan.call( options.styleFn );
 
-          tspanCount++;
+          tspanCount += 1;
           tspanText = word + options.separator;
         } else tspanText += (word + options.separator);
       });
-      if ( options.verticalAlign === 'middle' ) textElement.attr('dy', (-(tspanCount - 1) / 2 ) + 'em');
-      else if ( options.verticalAlign === 'bottom' ) textElement.attr('dy', (-(tspanCount - 1) ) + 'em');
+      if ( options.verticalAlign === 'middle' ) textElement.attr('dy', `${-(tspanCount - 1) / 2}em`);
+      else if ( options.verticalAlign === 'bottom' ) textElement.attr('dy', `${-(tspanCount - 1)}em`);
       else if ( options.verticalAlign === 'top' ) textElement.attr('dy', '0em');
-    }
-    else if ( options.labelWrapping === 'trim' ) {
-      for ( let i = 0; i < words.length; i++) {
-        const word = words[ i ];
+    } else if ( options.labelWrapping === 'trim' ) {
+      for ( let i = 0; i < words.length; i += 1) {
+        const word = words[i];
         tspan.text( tspanText + word + options.separator );
         if ( tspan.node().getComputedTextLength() > (options.maxLabelWidth ? options.maxLabelWidth : d.maxLabelWidth) - 10 ) {
-          tspan.text( tspanText + '...' );
+          tspan.text( `${tspanText}...` );
           break;
         } else tspanText += (word + options.separator);
       }
@@ -73,7 +75,8 @@ export const wrapLabel = (selection, opt) => {
   });
 };
 
-d3.selection.prototype.td = function(duration, delay) {
+/* eslint-disable-next-line func-names */
+d3.selection.prototype.td = function (duration, delay) {
   if ( duration ) return this.transition().duration( duration ).delay( delay || 0 );
   else return this;
 };

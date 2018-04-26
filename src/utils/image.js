@@ -5,7 +5,7 @@ export function urlToDataUri(url) {
   return new Promise(resolve => {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
-    image.onload = function() {
+    image.onload = () => {
       canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
       canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
       context.drawImage(this, 0, 0);

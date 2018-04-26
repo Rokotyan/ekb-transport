@@ -1,3 +1,4 @@
+/* eslint-disable */
 export async function svg2Image(node, width, height) {
   const svgString = getSVGString(node);
   const image = await svgString2Image(svgString, width, height);
@@ -21,10 +22,10 @@ export function getSVGString( svgNode ) {
     const selectorTextArr = [];
 
     // Add Parent element Id and Classes to the list
-    selectorTextArr.push( '#' + parentElement.id );
+    selectorTextArr.push( `#${parentElement.id}` );
     for (let c = 0; c < parentElement.classList.length; c++) {
-      if ( !contains('.' + parentElement.classList[c], selectorTextArr) ) {
-        selectorTextArr.push( '.' + parentElement.classList[c] );
+      if ( !contains(`.${parentElement.classList[c]}`, selectorTextArr) ) {
+        selectorTextArr.push( `.${parentElement.classList[c]}` );
       }
     }
 
@@ -32,14 +33,14 @@ export function getSVGString( svgNode ) {
     const nodes = parentElement.getElementsByTagName('*');
     for (let i = 0; i < nodes.length; i++) {
       const id = nodes[i].id;
-      if ( !contains('#' + id, selectorTextArr) ) {
-        selectorTextArr.push( '#' + id );
+      if ( !contains(`#${id}`, selectorTextArr) ) {
+        selectorTextArr.push( `#${id}` );
       }
 
       const classes = nodes[i].classList;
       for (let c = 0; c < classes.length; c++) {
-        if ( !contains('.' + classes[c], selectorTextArr) ) {
-          selectorTextArr.push( '.' + classes[c] );
+        if ( !contains(`.${classes[c]}`, selectorTextArr) ) {
+          selectorTextArr.push( `.${classes[c]}` );
         }
       }
     }
@@ -68,9 +69,8 @@ export function getSVGString( svgNode ) {
     return extractedCSSText;
 
     function contains(str, arr) {
-      return arr.indexOf( str ) === -1 ? false : true;
+      return arr.indexOf( str ) !== -1;
     }
-
   }
 
   function appendCSS( cssText, element ) {
@@ -83,7 +83,7 @@ export function getSVGString( svgNode ) {
 }
 
 export function svgString2Image( svgString, width, height, format = 'jpeg' ) {
-  const imgsrc = 'data:image/svg+xml;base64,' + btoa( unescape( encodeURIComponent( svgString ) ) );
+  const imgsrc = `data:image/svg+xml;base64,${btoa( unescape( encodeURIComponent( svgString ) ) )}`;
 
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
@@ -98,7 +98,7 @@ export function svgString2Image( svgString, width, height, format = 'jpeg' ) {
       context.fillStyle = '#FFFFFF';
       context.fillRect(0, 0, width, height);
       context.drawImage(image, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/' + format));
+      resolve(canvas.toDataURL(`image/${format}`));
     };
 
     image.src = imgsrc;

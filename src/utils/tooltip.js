@@ -36,13 +36,13 @@ export default class Tooltip {
     const pos = d3.mouse(svg.node().parentElement);
     let x = pos[0];
     let y = pos[1];
-    if (direction === 'right') x = x + w;
-    else if (direction === 'left') x = x - w;
-    else x = x - w * 0.5;
-    if (direction === 'bottom') y = y + h * 0.5;
-    else y = y - (h + 10);
+    if (direction === 'right') x += w;
+    else if (direction === 'left') x -= w;
+    else x -= w * 0.5;
+    if (direction === 'bottom') y += h * 0.5;
+    else y -= (h + 10);
     tooltip.styles({
-      'opacity': 1,
+      opacity: 1,
       left: `${x}px`,
       top: `${y}px`,
       border: borderColor ? `${borderColor} solid 0.5px` : 'none',
@@ -51,6 +51,6 @@ export default class Tooltip {
 
   hide() {
     const { tooltip } = this;
-    tooltip.styles({ 'opacity': 0 });
+    tooltip.styles({ opacity: 0 });
   }
 }

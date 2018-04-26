@@ -11,9 +11,7 @@ export function ordinalSuffix(n) {
   return n + ( s[(v - 20) % 10] || s[v] || s[0] );
 }
 
-export const capitalizeFirstLetter = string => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
+export const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
 
 export function toTitleCase(str) {
   return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
