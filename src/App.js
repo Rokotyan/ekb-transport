@@ -1,10 +1,13 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { hot } from 'react-hot-loader';
+import React, { Component } from 'react';
+import Map from './map/map.js'
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <Map/>
+      </div>
+    );
+  }
+}
 
-// Pages
-import MainPage from 'pages/main';
-
-const App = () => <MainPage />;
-
-export default hot(module)(App);
+export default App;
