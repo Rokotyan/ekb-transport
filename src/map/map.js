@@ -5,16 +5,22 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import DeckGLOverlay from '../deckgl-overlay/deckgl-overlay.js';
 import data from '../data/all.json';
 
+// Styles
+import './styles.css';
+
 const MAPBOX_TOKEN = process.env.MapboxAccessToken; 
 
 export default class Map extends Component {
   constructor(props) {
     super(props);
+
+    // We need to make a reference for our container (div element) to set the viewport to its size
+    this.makeRef = c => { this.el = c; };
     this.state = {
       viewport: {
         ...DeckGLOverlay.defaultViewport,
-        width: 500,
-        height: 500
+        width: 0,
+        height: 0
       },
       buildings: null,
       trips: data,
@@ -45,9 +51,10 @@ export default class Map extends Component {
   }
 
   _resize() {
+    // Set the viewport to the whole size of the container
     this._onViewportChange({
-      width: window.innerWidth,
-      height: 640,
+      width: this.el.clientWidth,
+      height: this.el.clientHeight,
     });
   }
 
@@ -60,27 +67,13 @@ export default class Map extends Component {
   render() {
     const {viewport, buildings, trips, time} = this.state;
     return (
+      <div className='map' ref={this.makeRef}>
         <MapGL
           {...viewport}
           mapStyle="mapbox://styles/mapbox/dark-v9"
           onViewportChange={this._onViewportChange.bind(this)}
           mapboxApiAccessToken={'pk.eyJ1IjoiaGxsc25kcyIsImEiOiJjamYzbzNtN3ExajBpMnlwazdxZWUzcXNwIn0.aLwlUoj_gtjBpEXoKOkvNg'}
           >
-          <div class='w240 round shadow-darken10 px12 py12 bg-gray-faint txt-s'>
-            <strong class='block mb6'>Trails</strong>
-            <div class='grid mb6'>
-              <div class='col bg-red-light h12'></div>
-              <div class='col bg-yellow-faint h12'></div>
-              <div class='col bg-green-light h12'></div>
-              <div class='col bg-blue-light h12'></div>
-            </div>
-            <div class='grid txt-xs'>
-              <div class='col align-center'>avtb</div>
-              <div class='col align-center'>trol</div>
-              <div class='col align-center'>tram</div>
-              <div class='col align-center'>avtm</div>
-            </div>
-          </div>
           <DeckGLOverlay
             viewport={viewport}
             //buildings={buildings}
@@ -89,6 +82,7 @@ export default class Map extends Component {
             time={time}
           />
         </MapGL>
+      </div>
     );
   }
 }
