@@ -30,7 +30,7 @@ class App extends Component {
     return (
       <div className="vis-map">
         <Map mode={activeTabIdx}/>
-        <Header onTabChange={this.onTabChange}/>
+        <Header activeTabIdx={activeTabIdx} onTabChange={this.onTabChange}/>
         <Legend />
         <Slidery />
       </div>

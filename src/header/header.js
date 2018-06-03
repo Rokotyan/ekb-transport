@@ -10,7 +10,6 @@ export default class Header extends Component {
     this.activateTab = this.activateTab.bind(this);
     this.state = {
       options: 'mode-story',
-      activeTabIdx: 0,
     };
   }
 
@@ -18,17 +17,12 @@ export default class Header extends Component {
     const { onTabChange } = this.props;
 
     if (onTabChange instanceof Function) onTabChange(idx);
-
-    this.setState({
-      activeTabIdx: idx,
-    });
     e.preventDefault();
   }
 
   render() {
-    const {
-      options, activeTabIdx,
-    } = this.state;
+    const { options } = this.state;
+    const { activeTabIdx } = this.props;
 
     const tabs = ['Покрытие', 'Доступность', 'Регулярность'];
     return (
