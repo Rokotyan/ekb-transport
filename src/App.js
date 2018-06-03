@@ -9,11 +9,28 @@ import Slidery from './slider/slider';
 import './App.css';
 
 class App extends Component {
+  constructor(props){
+    super(props);
+
+    this.onTabChange = this.onTabChange.bind(this); // We need to bind the component to the method
+    this.state = {
+      activeTabIdx: 0,
+    };
+  }
+
+  onTabChange(idx) {
+    this.setState({
+      activeTabIdx: idx,
+    });
+  }
+
   render() {
+    const { activeTabIdx } = this.state;
+
     return (
       <div className="vis-map">
-        <Map />
-        <Header />
+        <Map mode={activeTabIdx}/>
+        <Header onTabChange={this.onTabChange}/>
         <Legend />
         <Slidery />
       </div>
