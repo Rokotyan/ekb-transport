@@ -12,46 +12,22 @@ const LIGHT_SETTINGS = {
 };
 
 export default class DeckGLOverlay extends Component {
-  static get defaultViewport() {
-    return {
-      longitude: 60.61,
-      latitude: 56.835,     
-      zoom: 12,
-      maxZoom: 16,
-      pitch: 45, // наклон
-      bearing: 0
-    };
-  }
-
   render() {
-    const {viewport, buildings, trips, trailLength, time} = this.props;
+    const {viewport, trips, trailLength, time} = this.props;
     if (!trips) {
       return null;
     }
-
     const layers = [
       new TripsLayer({
         id: 'trips',
         data: trips,
         getPath: d => d.segments,
         getColor: d => (d.vendor === 0 ? [222, 101, 69] : d.vendor === 1 ? [81, 88, 182] : d.vendor === 2 ? [48, 204, 109] : [255, 227, 100]),
-        opacity: 0.3,
-        strokeWidth: 2,
+        opacity: 1,
+        strokeWidth: 5,
         trailLength,
         currentTime: time
       }),
-      // new PolygonLayer({
-      //   id: 'buildings',
-      //   data: buildings,
-      //   extruded: true,
-      //   wireframe: false,
-      //   fp64: true,
-      //   opacity: 0.5,
-      //   getPolygon: f => f.polygon,
-      //   getElevation: f => f.height,
-      //   getFillColor: f => [74, 80, 87],
-      //   lightSettings: LIGHT_SETTINGS
-      // })
     ];
     return <DeckGL {...viewport} layers={layers} />;
   }

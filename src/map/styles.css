@@ -3,3 +3,46 @@
   width: 100%;
   height: 100%;
 }
+
+
+
+.map * {
+cursor: none;
+}
+
+
+.tooltip {
+  position: absolute;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  max-width: 300px;
+  font-size: 11px;
+  z-index: 9;
+  line-height: 20px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 2.5px;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.line {
+  position: absolute;
+  height: 0px;
+  width: 30px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 3px solid #333;
+  transform-origin: left center;
+  margin-top: -1.5px;
+}
