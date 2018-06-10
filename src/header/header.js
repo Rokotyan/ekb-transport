@@ -9,7 +9,6 @@ export default class Header extends Component {
 
     this.activateTab = this.activateTab.bind(this);
     this.state = {
-      options: 'mode-story',
     };
   }
 
@@ -21,7 +20,6 @@ export default class Header extends Component {
   }
 
   render() {
-    const { options } = this.state;
     const { activeTabIdx } = this.props;
 
     const tabs = ['Покрытие', 'Доступность', 'Регулярность'];
@@ -30,9 +28,8 @@ export default class Header extends Component {
         <div id="about-link">
           <div >О проекте</div>
         </div>
-        <div id="legend-mobile" />
         <div id="modes">
-          { tabs.map( (name, i) => (
+          { tabs.map((name, i) => (
             <div
               key={name}
               className={activeTabIdx === i ? 'mode-selected' : 'mode'}
@@ -42,16 +39,6 @@ export default class Header extends Component {
             </div>
             ))
           }
-
-{/*          <div className="mode-selected" id="mode-story" onClick={this.handleClick}>
-            <span className="desktop">Покрытие</span>
-          </div>
-          <div className="mode" id="mode-viz" onClick={this.handleClick}>
-            <div>Доступность</div>
-          </div>
-          <div className="mode" id="mode-stats" onClick={this.handleClick}>
-            <div>Регулярность</div>
-          </div>*/}
         </div>
         <div id="title">
           <div>Общественный транспорт Екатеринбурга</div>

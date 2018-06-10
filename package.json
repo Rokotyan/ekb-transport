@@ -16,7 +16,8 @@
     "react-dom": "^16.4.0",
     "react-map-gl": "^3.2.7",
     "react-rangeslider": "^2.2.0",
-    "react-scripts": "^1.1.4"
+    "react-scripts": "^1.1.4",
+    "tern": "^0.21.0"
   },
   "scripts": {
     "start": "react-scripts start",

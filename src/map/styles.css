@@ -6,12 +6,13 @@
 
 
 
-.map * {
+/*.map * {
 cursor: none;
-}
+}*/
 
 
 .tooltip {
+  pointer-events: none;
   position: absolute;
   padding-left: 6px;
   padding-right: 6px;
@@ -27,6 +28,7 @@ cursor: none;
 }
 
 .dot {
+  pointer-events: none;
   width: 5px;
   height: 5px;
   background: white;
@@ -45,4 +47,17 @@ cursor: none;
   border-top: 3px solid #333;
   transform-origin: left center;
   margin-top: -1.5px;
+}
+
+.overlays {
+
+}
+
+
+.oval {
+  width: 30px;
+  height: 30px;
+  border: none;
+  color: rgba(0,0,0,1);
+  background: #1abc9c;
 }

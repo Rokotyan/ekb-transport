@@ -7,7 +7,8 @@
 .storymode {
  position: relative;
  z-index: 1012022;
- top: 60px;
+ cursor: default;
+ top: 65px;
  left: 20px;
  width: 300px;
  background: rgba(12, 12, 12, 0.8);
@@ -32,6 +33,12 @@ overflow: auto;
     margin-left: auto;
     margin-right: auto;
    margin-top: 15px;
+}
+
+.storymode-select {
+  margin-top: 5px;
+  font-size: 12px;
+
 }
 
 #storymode-header {
@@ -84,4 +91,39 @@ i {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.band {
+    width: 100%;
+    height: 10px;
+    margin-bottom: 5px;
+    background: linear-gradient(to left, #f54e5e, #f1f075, #98fb98);
+}
+
+input:checked+.toggle--white {
+    background: #eee;
+}
+
+
+.checkboxplace {
+  display:block;
+  margin-top: 10px;
+   font-size: 12px;
+  overflow: auto;
+  cursor: default;
+}
+.toggle{
+    font-weight: 100;
+}
+
+.select {
+   font-weight: 100;
+}
+
+input:checked+.toggle {
+    color: black;
+}
+
+.toggle-group {
+    margin-top: 3px;
 }

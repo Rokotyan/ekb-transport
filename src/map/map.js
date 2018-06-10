@@ -1,19 +1,21 @@
 /* global window,document */
 import React, { Component } from 'react';
 import { fromJS } from 'immutable';
-import MapGL from 'react-map-gl';
+import MapGL, { Marker, Popup, FlyToInterpolator } from 'react-map-gl';
 import * as turf from '@turf/turf';
 import { json as requestJson } from 'd3-request';
-import { defaultMapStyle, dataLayer, dataLayer1 } from '../map/map-style';
+import { defaultMapStyle, populationByPolygon, isochrones } from '../map/map-style';
 import DeckGLOverlay from '../deckgl-overlay/deckgl-overlay';
-import tripsData from '../data/trips.json';
+import tripsData from '../data/trips2.json';
 import getScale from '../map/utils';
+import Pin from '../map/pin';
 
 // Styles
 import './styles.css';
 
 const NodeGeocoder = require('node-geocoder');
 
+const sleep = millis => new Promise(resolve => setTimeout(resolve, millis));
 const geooptions = {
   provider: 'locationiq',
   apiKey: '99a8f2781e9c90',
@@ -40,14 +42,18 @@ export default class Map extends Component {
         latitude: 56.835,
         zoom: 12,
         maxZoom: 16,
-        pitch: 45,
-        bearing: 0,
+        pitch: 50,
+        bearing: 4,
       },
+      longitude: 60.618296,
+      latitude: 56.853880,
       mapStyle: defaultMapStyle,
       trips: tripsData,
       time: 12,
       hoveredFeature: null,
       address: null,
+      mode: null,
+      isChecked: true,
     };
   }
 
@@ -69,20 +75,52 @@ export default class Map extends Component {
     });
   }
 
-  onLoad = () => {
-    // метод для второй кнопки
-    // requestJson('../data/test.json', (error, response) => {
-    //   if (!error) {
-    //     this._loadData(response);
-    //   }
-    // });
-    requestJson('../data/density.json', (error, response) => {
-      if (!error) {
-        this.loadData(response);
-      }
-    });
-  };
+  onModeChange = (mode) => {
+    if (mode !== this.state.mode) {
+      this.setState({ mode }, () => {
+        this.onLoad();
+      });
+    }
+  }
 
+  onToggle = (isChecked) => {
+    if (isChecked !== this.state.isChecked) {
+      this.setState({ isChecked }, () => {
+        if (isChecked === false) {
+          requestJson('../data/density.json', (error, response) => {
+            if (!error) {
+              this.loadData(response, 10, f => f.properties.density, 'populationByPolygon', populationByPolygon);
+            }
+          });
+          this.goToViewport({
+            latitude: 56.835,
+            longitude: 60.61,
+          });
+        } else this.setState({ mapStyle: defaultMapStyle });
+      });
+    }
+  }
+
+  onLoad = () => {
+    if (this.state.mode === 0) {
+      this.goToViewport({
+        latitude: 56.835,
+        longitude: 60.61,
+      });
+      this.setState({ trips: tripsData, mapStyle: defaultMapStyle, isChecked: false });
+    } else if (this.state.mode === 1) {
+      this.goToViewport({
+        latitude: 56.853880,
+        longitude: 60.618296,
+      });
+      this.setState({ trips: null });
+      requestJson('../data/test.json', (error, response) => {
+        if (!error) {
+          this.loadData(response, 10, f => f.properties.time, 'isochrones', isochrones);
+        }
+      });
+    }
+  };
 
   onHover = (event) => {
     this.hoveredFeature = null;
@@ -91,19 +129,18 @@ export default class Map extends Component {
       srcEvent: { offsetX, offsetY },
       srcEvent: { timeStamp },
     } = event;
-    // console.log(this.el.style.cursor = 'pointer');
     const hoveredFeature =
       features && features.find(f => f.layer.id === 'data');
     if (hoveredFeature) {
-      if (timeStamp - temptimestamp > 900) {
-        const address = null;
-        this.setState({ address });
-        // console.log(event.srcEvent.timeStamp);
-        this.getAddress(turf.centroid(hoveredFeature).geometry.coordinates);
-        if (hoveredFeature.properties.population !== temp) {
-          temp = hoveredFeature.properties.population;
+      if (event.features[0].properties.value !== temp) {
+        if (timeStamp - temptimestamp > 900) {
+          // todo get address if hovered but time > 900
+          const address = null;
+          this.setState({ address });
+          this.getAddress(turf.centroid(hoveredFeature).geometry.coordinates);
+          temp = event.features[0].properties.value;
+          temptimestamp = timeStamp;
         }
-        temptimestamp = timeStamp;
       }
     }
     this.setState({ hoveredFeature, x: offsetX, y: offsetY });
@@ -113,49 +150,52 @@ export default class Map extends Component {
     let address = null;
     geocoder.reverse({ lat: point[1], lon: point[0] }, (err, res) => {
       if (!err) {
-        if (res.raw.address.suburb) {
-          if (res.raw.address.house_number) {
-            address = `${res.raw.address.suburb}, ${res.raw.address.road}, ${
+        // console.log(res.raw.address);
+        if (res.raw.address.house_number) {
+          if (res.raw.address.road) {
+            if (res.raw.address.suburb) {
+              address = `${res.raw.address.suburb}, ${res.raw.address.road}, ${
+                res.raw.address.house_number
+              }`;
+            } else if (res.raw.address.city_district) {
+              address = `${res.raw.address.city_district}, ${res.raw.address.road}, ${
+                res.raw.address.house_number
+              }`;
+            } else {
+              address = ` ${res.raw.address.road}, ${
+                res.raw.address.house_number
+              }`;
+            }
+          } else if (res.raw.address.pedestrian) {
+            address = `${res.raw.address.suburb}, ${res.raw.address.pedestrian}, ${
               res.raw.address.house_number
             }`;
-          } else {
-            address = `${res.raw.address.suburb}, ${res.raw.address.road}`;
           }
-        } else {
-          address = `${res.raw.address.city_district}, ${
-            res.raw.address.road
-          }, ${res.raw.address.house_number}`;
-        }
+        } else if (res.raw.address.road) {
+          if (res.raw.address.suburb) { address = `${res.raw.address.suburb}, ${res.raw.address.road}`; } else address = `${res.raw.address.city_district}, ${res.raw.address.road}`;
+        } else if (res.raw.address.pedestrian) {
+          address = `${res.raw.address.suburb}, ${res.raw.address.pedestrian}`;
+        } else { address = `${res.raw.address.city_district}, ${res.raw.address.suburb}`; }
       }
       this.setState({ address });
     });
   };
 
-  loadData = (data) => {
-    getScale(data, 10, f => f.properties.density);
+  loadData = (data, scale, accessor, sourcename, dataLayer) => {
+    getScale(data, scale, accessor);
+
     const mapStyle = defaultMapStyle
       // Add geojson source to map
       .setIn(
-        ['sources', 'populationByPolygon'],
+        ['sources', sourcename],
         fromJS({ type: 'geojson', data }),
       )
       // Add point layer to map
       .set('layers', defaultMapStyle.get('layers').insert(129, dataLayer));
+    // console.log(defaultMapStyle.toJS().layers.findIndex(x => x.id === 'place-suburb'));
+
     this.setState({ mapStyle });
   };
-
-  // метод для второй кнопки
-  // _loadData = (data) => {
-  //   getScale(data, 20, f => f.properties.time);
-  //   const mapStyle = defaultMapStyle
-  //     // Add geojson source to map
-  //     .setIn(['sources', 'isochrones'], fromJS({ type: 'geojson', data }))
-  //     // .set('layers', defaultMapStyle.get('layers').push(dataLayer1));
-  //     // это индекс места с названиями районов
-  //     // console.log(defaultMapStyle.toJS().layers.findIndex(x => x.id === 'place-suburb')); 129
-  //     .set('layers', defaultMapStyle.get('layers').insert(129, dataLayer1));
-  //   this.setState({ data, mapStyle });
-  // }
 
   animate = () => {
     const timestamp = Date.now();
@@ -174,39 +214,121 @@ export default class Map extends Component {
     });
   }
 
-  renderTooltip = () => {
-    const {
-      hoveredFeature, x, y, address,
-    } = this.state;
+  goToViewport = ({ longitude, latitude }) => {
+    if (this.state.mode === 1) {
+      this.onViewportChange({
+        longitude,
+        latitude,
+        zoom: 11.7,
+        pitch: 5,
+        bearing: -1,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionDuration: 500,
+      });
+    }
+    if (this.state.mode === 0) {
+      this.onViewportChange({
+        longitude,
+        latitude,
+        zoom: 12,
+        maxZoom: 16,
+        pitch: 45,
+        bearing: 4,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionDuration: 1000,
+      });
+    }
+    if (this.state.isChecked === false && this.state.mode === 0) {
+      this.onViewportChange({
+        longitude,
+        latitude,
+        zoom: 11.5,
+        pitch: 0,
+        bearing: -8,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionDuration: 500,
+      });
+    }
+  };
+
+renderMarker = () => {
+  if (this.state.mode === 1) {
     return (
-      hoveredFeature && (
+      <Marker
+        latitude={this.state.latitude}
+        longitude={this.state.longitude}
+        onDragStart={this.onMarkerDragStart}
+        onDragEnd={this.onMarkerDragEnd}
+        onDrag={this.onMarkerDrag}
+        captureDrag
+      >
+        <Pin />
+      </Marker>);
+  }
+}
+
+  onMarkerDragStart = (event) => {
+    const { latitude, longitude } = event;
+    console.log('1');
+    // Any functionality for when a drag starts
+  }
+
+  onMarkerDragEnd = (event) => {
+    const { latitude, longitude } = event;
+    console.log('2');
+    // Any functionality for when a drag ends
+    this.setState({ latitude, longitude });
+  }
+
+  onMarkerDrag = (event) => {
+    const {
+      features,
+    } = event;
+    console.log('3');
+    event.preventDefault();
+    // Any functionality when marker moves while being dragged
+  }
+
+  renderTooltip = () => {
+    if (this.state.mode === 0) {
+      const {
+        hoveredFeature, x, y, address,
+      } = this.state;
+      return (
+        hoveredFeature && (
+        <div>
+          <div className="dot" style={{ left: x, top: y }} />
+          <div className="line" style={{ left: x + 2, top: y + 2 }} />
+          <div className="tooltip" style={{ left: x + 20, top: y + 20 }}>
+            <div>{address}</div>
+            <div><b>~{hoveredFeature.properties.population}</b> жителей ({`${hoveredFeature.properties.density}/км\xB2`})</div>
+          </div>
+        </div>
+        )
+      );
+    } else if (this.state.mode === 1) {
+      const {
+        hoveredFeature, x, y, address,
+      } = this.state;
+      return hoveredFeature && (
       <div>
         <div className="dot" style={{ left: x, top: y }} />
         <div className="line" style={{ left: x + 2, top: y + 2 }} />
         <div className="tooltip" style={{ left: x + 20, top: y + 20 }}>
           <div>{address}</div>
-          <div><b>~{hoveredFeature.properties.population}</b> жителей ({`${hoveredFeature.properties.density}/км\xB2`})</div>
+          <div>около {`${(hoveredFeature.properties.time / 60).toFixed()} минут`}</div>
         </div>
       </div>
-      )
-    );
+      );
+    }
   }
-
-  // метод для второй кнопки
-  // _renderTooltip() {
-  //   const { hoveredFeature, x, y } = this.state;
-  //   return hoveredFeature && (
-  //     <div className="tooltip" style={{ left: x, top: y }}>
-  //       <div>scale: ~{hoveredFeature.properties.scale}</div>
-  //       <div>time: {`${(hoveredFeature.properties.time / 60).toFixed()} mins`}</div>
-  //     </div>
-  //   );
-  // }
 
   render() {
     const {
       viewport, mapStyle, trips, time,
     } = this.state;
+    const { mode } = this.props;
+    const { isChecked } = this.props;
     return (
       <div className="map" ref={this.makeRef}>
         <MapGL
@@ -216,12 +338,15 @@ export default class Map extends Component {
           mapboxApiAccessToken={accessToken}
           onHover={this.onHover}
           onLoad={this.onLoad}
+          onModeChange={this.onModeChange(mode)}
+          onToggle={this.onToggle(isChecked)}
         >
+          {this.renderMarker()}
           {this.renderTooltip()}
           <DeckGLOverlay
             viewport={viewport}
             trips={trips}
-            trailLength={110}
+            trailLength={60}
             time={time}
           />
         </MapGL>

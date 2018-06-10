@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import DeckGL, {PolygonLayer} from 'deck.gl';
+import React, { Component } from 'react';
+import DeckGL, { PolygonLayer } from 'deck.gl';
 import TripsLayer from '../trips-layer';
 
 const LIGHT_SETTINGS = {
@@ -8,12 +8,14 @@ const LIGHT_SETTINGS = {
   diffuseRatio: 0.6,
   specularRatio: 0.8,
   lightsStrength: [2.0, 0.0, 0.0, 0.0],
-  numberOfLights: 2
+  numberOfLights: 2,
 };
 
 export default class DeckGLOverlay extends Component {
   render() {
-    const {viewport, trips, trailLength, time} = this.props;
+    const {
+      viewport, trips, trailLength, time,
+    } = this.props;
     if (!trips) {
       return null;
     }
@@ -22,11 +24,11 @@ export default class DeckGLOverlay extends Component {
         id: 'trips',
         data: trips,
         getPath: d => d.segments,
-        getColor: d => (d.vendor === 0 ? [222, 101, 69] : d.vendor === 1 ? [81, 88, 182] : d.vendor === 2 ? [48, 204, 109] : [255, 227, 100]),
+        getColor: d => (d.vendor === 0 ? [255, 49, 27] : d.vendor === 1 ? [92, 43, 213] : d.vendor === 2 ? [23, 222, 67] : [255, 221, 27]),
         opacity: 1,
         strokeWidth: 5,
         trailLength,
-        currentTime: time
+        currentTime: time,
       }),
     ];
     return <DeckGL {...viewport} layers={layers} />;

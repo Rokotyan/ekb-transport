@@ -1,8 +1,8 @@
 import { fromJS } from 'immutable';
-import MAP_STYLE from '../map/style.json';
+import MAP_STYLE from '../map/mapbox-style.json';
 
 // For more information on data-driven styles, see https://www.mapbox.com/help/gl-dds-ref/
-export const dataLayer = fromJS({
+export const populationByPolygon = fromJS({
   id: 'data',
   source: 'populationByPolygon',
   type: 'fill',
@@ -28,7 +28,7 @@ export const dataLayer = fromJS({
 });
 
 
-export const dataLayer1 = fromJS({
+export const isochrones = fromJS({
   id: 'data',
   source: 'isochrones',
   type: 'fill',
@@ -38,28 +38,18 @@ export const dataLayer1 = fromJS({
       property: 'scale',
       stops: [
         [0, '#98fb98'],
-        [1, '#a6fb8f'],
-        [2, '#b3f987'],
-        [3, '#bef77f'],
-        [4, '#c9f477'],
-        [5, '#d2f06f'],
-        [6, '#daeb67'],
-        [7, '#e2e560'],
-        [8, '#e9de59'],
-        [9, '#efd653'],
-        [10, '#f4cd4d'],
-        [11, '#f9c347'],
-        [12, '#fcb843'],
-        [13, '#ffab3e'],
-        [14, '#ff9e3b'],
-        [15, '#ff8e38'],
-        [16, '#ff7d35'],
-        [17, '#ff6a33'],
-        [18, '#ff5232'],
-        [19, '#ff3131'],
+        [1, '#b0f990'],
+        [2, '#c4f789'],
+        [3, '#d7f481'],
+        [4, '#e9f179'],
+        [5, '#f4e073'],
+        [6, '#f8c06e'],
+        [7, '#f99e69'],
+        [8, '#f87a64'],
+        [9, '#f54e5e'],
       ],
     },
-    'fill-opacity': 0.5,
+    'fill-opacity': 0.6,
   },
 });
 
