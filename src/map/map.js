@@ -1,4 +1,4 @@
-/* global window,document */
+/* global window, document */
 import React, { Component } from 'react';
 import { fromJS } from 'immutable';
 import MapGL, { Marker, Popup, FlyToInterpolator } from 'react-map-gl';
@@ -121,6 +121,19 @@ export default class Map extends Component {
       });
     }
   };
+
+  onClick = (event) => {
+    this.hoveredFeature = null;
+    const { features } = event;
+    const hoveredFeature = features && features.find(f => f.layer.id === 'data');
+    const coordinates = hoveredFeature ? turf.centroid(hoveredFeature).geometry.coordinates : null;
+    if (coordinates) {
+      this.setState({
+        latitude: coordinates[1],
+        longitude: coordinates[0],
+      });
+    }
+  }
 
   onHover = (event) => {
     this.hoveredFeature = null;
@@ -337,6 +350,7 @@ renderMarker = () => {
           onViewportChange={this.onViewportChange.bind(this)}
           mapboxApiAccessToken={accessToken}
           onHover={this.onHover}
+          onClick={this.onClick}
           onLoad={this.onLoad}
           onModeChange={this.onModeChange(mode)}
           onToggle={this.onToggle(isChecked)}
