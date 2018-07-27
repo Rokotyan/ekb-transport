@@ -6,9 +6,10 @@ import * as turf from '@turf/turf';
 import { json as requestJson } from 'd3-request';
 import { defaultMapStyle, populationByPolygon, isochrones } from '../map/map-style';
 import DeckGLOverlay from '../deckgl-overlay/deckgl-overlay';
-import tripsData from '../data/trips2.json';
+import tripsData from '../data/tryx.json';
 import getScale from '../map/utils';
 import Pin from '../map/pin';
+import isochrone from '../map/myiso';
 
 // Styles
 import './styles.css';
@@ -25,7 +26,7 @@ const geocoder = NodeGeocoder(geooptions);
 // Mapbox
 const accessToken =
   'pk.eyJ1IjoiaGFsbHNleSIsImEiOiJjamh4Y2hsYWIwYWJ3M3dwYjZlN2cyamZqIn0.XGLq4Gx6F_ZRIusQm7Elcg';
-
+const gmapskey = 'AIzaSyAy4grLuONSG-gN4UuAAi-5lWZPXWO5nbM';
 let temp = null;
 let temptimestamp = 0;
 
@@ -54,6 +55,11 @@ export default class Map extends Component {
       address: null,
       mode: null,
       isChecked: true,
+      speed: null,
+      length: null,
+      transitmode: null,
+      transittime: null,
+      loading: false,
     };
   }
 
@@ -123,14 +129,33 @@ export default class Map extends Component {
   };
 
   onClick = (event) => {
+    const { transitmode, transittime, radius } = this.props;
+    const { loading } = this.state;
     this.hoveredFeature = null;
     const { features } = event;
     const hoveredFeature = features && features.find(f => f.layer.id === 'data');
     const coordinates = hoveredFeature ? turf.centroid(hoveredFeature).geometry.coordinates : null;
     if (coordinates) {
+      // this.setState({
+      //   latitude: coordinates[1],
+      //   longitude: coordinates[0],
+      // });
       this.setState({
         latitude: coordinates[1],
         longitude: coordinates[0],
+        loading: true,
+        // mapStyle: defaultMapStyle,
+      }, () => {
+        isochrone([this.state.longitude, this.state.latitude], radius, transittime, transitmode, 'directions', gmapskey, (err, output) => {
+          if (err) throw err;
+          // console.log(output);
+          this.loadData(output, 10, f => f.properties.time, 'isochrones', isochrones);
+          this.setState({ loading: false });
+
+          // fs.writeFileSync('test', JSON.stringify(output, null, 2));
+        });
+        // console.log([this.state.latitude, this.state.longitude]);
+        // this.onLoad();
       });
     }
   }
@@ -211,9 +236,10 @@ export default class Map extends Component {
   };
 
   animate = () => {
+    const { speed } = this.props;
     const timestamp = Date.now();
-    const loopLength = 1700; // 1700
-    const loopTime = 150000; // 60000 speed (100k)
+    const loopLength = 86400; // 1700
+    const loopTime = speed; // 60000 speed (100k)
     // console.log((timestamp % loopTime) / loopTime * loopLength);
     this.setState({ time: ((timestamp % loopTime) / loopTime) * loopLength });
     this.animationFrame = window.requestAnimationFrame(this.animate.bind(this));
@@ -280,6 +306,13 @@ renderMarker = () => {
   }
 }
 
+renderSpinner= () => {
+  if (this.state.loading) {
+    return (
+      <div className="loading" />);
+  }
+}
+
   onMarkerDragStart = (event) => {
     const { latitude, longitude } = event;
     console.log('1');
@@ -338,32 +371,37 @@ renderMarker = () => {
 
   render() {
     const {
-      viewport, mapStyle, trips, time,
+      viewport, mapStyle, trips, time, loading,
     } = this.state;
-    const { mode } = this.props;
+    const { mode, length } = this.props;
     const { isChecked } = this.props;
+
+    // if (loading)
     return (
-      <div className="map" ref={this.makeRef}>
-        <MapGL
-          {...viewport}
-          mapStyle={mapStyle}
-          onViewportChange={this.onViewportChange.bind(this)}
-          mapboxApiAccessToken={accessToken}
-          onHover={this.onHover}
-          onClick={this.onClick}
-          onLoad={this.onLoad}
-          onModeChange={this.onModeChange(mode)}
-          onToggle={this.onToggle(isChecked)}
-        >
-          {this.renderMarker()}
-          {this.renderTooltip()}
-          <DeckGLOverlay
-            viewport={viewport}
-            trips={trips}
-            trailLength={60}
-            time={time}
-          />
-        </MapGL>
+      <div>
+        <div className="map" ref={this.makeRef}>
+          {this.renderSpinner()}
+          <MapGL
+            {...viewport}
+            mapStyle={mapStyle}
+            onViewportChange={this.onViewportChange.bind(this)}
+            mapboxApiAccessToken={accessToken}
+            onHover={this.onHover}
+            onClick={this.onClick}
+            onLoad={this.onLoad}
+            onModeChange={this.onModeChange(mode)}
+            onToggle={this.onToggle(isChecked)}
+          >
+            {this.renderMarker()}
+            {this.renderTooltip()}
+            <DeckGLOverlay
+              viewport={viewport}
+              trips={trips}
+              trailLength={length}
+              time={time}
+            />
+          </MapGL>
+        </div>
       </div>
     );
   }

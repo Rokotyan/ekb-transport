@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google/maps": "^0.4.6",
+    "@turf/destination": "^6.0.1",
     "@turf/turf": "^5.1.6",
     "cheap-ruler": "^2.5.1",
     "d3-array": "^1.2.1",

@@ -22,7 +22,7 @@ export default class Header extends Component {
   render() {
     const { activeTabIdx } = this.props;
 
-    const tabs = ['Покрытие', 'Доступность', 'Регулярность'];
+    const tabs = ['Покрытие', 'Доступность'];
     return (
       <div className="header">
         <div id="about-link">

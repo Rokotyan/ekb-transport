@@ -107,11 +107,28 @@ input:checked+.toggle--white {
 
 .checkboxplace {
   display:block;
-  margin-top: 10px;
-   font-size: 12px;
+  margin-top: 12px;
+   font-size: 13px;
   overflow: auto;
   cursor: default;
+  font-family: 'Roboto Condensed', sans-serif;
 }
+
+.checkboxplace2 {
+  display:block;
+  margin-top: 4px;
+   font-size: 13px;
+  overflow: auto;
+  cursor: default;
+  font-family: 'Roboto Condensed', sans-serif;
+
+}
+
+.sliderplace {
+  position: absolute;
+  width: 100px;
+}
+
 .toggle{
     font-weight: 100;
 }
@@ -126,4 +143,13 @@ input:checked+.toggle {
 
 .toggle-group {
     margin-top: 3px;
+}
+
+body, input, textarea {
+     color: #d6d6d6;
+    font-size: 15px;
+    line-height: 24px;
+    font-family: 'Open Sans',sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
 }
