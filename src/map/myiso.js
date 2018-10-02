@@ -48,6 +48,7 @@ function isochrone(startingPosition, hexRadius, timeLimit, transportMode, servic
   async function check() {
     const toCheck = [];
     for (const [i, point] of grid.points.entries()) {
+      console.log(grid.result[i]);
       if (grid.result[i] == true) toCheck.push(point); // if true or >0
     }
     if (toCheck.length > 0) await makeRequest(toCheck); else hexagonize();
@@ -105,9 +106,10 @@ function isochrone(startingPosition, hexRadius, timeLimit, transportMode, servic
       if (response.status !== 200) grid.result[grid.points.findIndex(p => p == points[0])] = false; else {
         const times = [];
         for (const route of response.json.routes) times.push(route.legs[0].duration.value);
-        const mintime = Math.min.apply(null, times);
+        const mintime = Math.max.apply(null, times);
+        // console.log(mintime);
         const index = grid.points.findIndex(p => p == points[0]);
-        grid.result[index] = mintime < timeLimit ? mintime : false;
+        grid.result[index] = ((mintime < timeLimit) && (mintime > 0)) ? mintime : false;
         if (grid.result[index] > 0) pointGrid(points[0]);
       }
     } else {

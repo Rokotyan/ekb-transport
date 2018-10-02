@@ -44,7 +44,7 @@ class App extends Component {
 
   onTransitModeChange(tm) {
     let radius = 0.5;
-    if (tm == 'driving') radius *= 1.5;
+    if (tm == 'driving') radius *= 2;
     if (tm == 'walking') radius /= 2;
     console.log(tm);
     if (this.state.transittime) { this.setState({ transitmode: tm, radius }); }

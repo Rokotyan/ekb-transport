@@ -146,9 +146,10 @@ export default class Map extends Component {
         loading: true,
         // mapStyle: defaultMapStyle,
       }, () => {
+        console.log(this.state.longitude, this.state.latitude);
         isochrone([this.state.longitude, this.state.latitude], radius, transittime, transitmode, 'directions', gmapskey, (err, output) => {
           if (err) throw err;
-          // console.log(output);
+          console.log(JSON.stringify(output));
           this.loadData(output, 10, f => f.properties.time, 'isochrones', isochrones);
           this.setState({ loading: false });
 
